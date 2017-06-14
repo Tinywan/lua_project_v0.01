@@ -43,7 +43,7 @@ local function close_redis(red)
         return
     end
     --释放连接(连接池实现)
-    local pool_max_idle_time = 10000 --毫秒
+    local pool_max_idle_time = 10000000 --毫秒
     local pool_size = 100 --连接池大小
     local ok, err = red:set_keepalive(pool_max_idle_time, pool_size)
 
@@ -63,16 +63,16 @@ local function read_redis(_host, _port, _auth, keys)
 
     -- 请注意这里 auth 的调用过程
     local count
-    count, err = red:get_reused_times()
+    count, err = red:get_reused_times()   -- 如果当前连接不是从内建连接池中获取的，该方法总是返回 0 ，也就是说，该连接还没有被使用过。如果连接来自连接池，那么返回值永远都是非零。
+    log(ERR, " ======{{ get_reused_times }} == "..count) -- tag data origin
     if 0 == count then
         ok, err = red:auth(_auth)
         if not ok then
             log(ERR, "failed to auth: ", err)
-            return close_redis(red)
         end
     elseif err then
         log(ERR, "failed to get reused times: ", err)
-        return close_redis(red)
+--        return close_redis(red)
     end
 
     local resp = nil
@@ -91,7 +91,7 @@ local function read_redis(_host, _port, _auth, keys)
         resp = nil
     end
     close_redis(red)
-    log(ERR, " [read_redis] content from redis.cache  id = " .. keys[1]) -- tag data origin
+    log(ERR,  "[read_redis] content from redis.cache  id = " .. keys[1]) -- tag data origin
     return resp
 end
 
