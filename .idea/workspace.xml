@@ -3,9 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="f79d2b80-65eb-4b3f-9d56-955664a577b4" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application/controller/LiveRedisCacheController.lua" afterPath="$PROJECT_DIR$/application/controller/LiveRedisCacheController.lua" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/conf/domains/nginx_live.conf" afterPath="$PROJECT_DIR$/conf/domains/nginx_live.conf" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -69,7 +66,7 @@
         <entry file="file://$PROJECT_DIR$/logs/live_error.log">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-3961">
-              <caret line="0" column="67" lean-forward="false" selection-start-line="0" selection-start-column="67" selection-end-line="0" selection-end-column="67" />
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -527,14 +524,7 @@
       <workItem from="1497427988425" duration="3871000" />
       <workItem from="1497431929008" duration="599000" />
       <workItem from="1497488708011" duration="94000" />
-      <workItem from="1497492375193" duration="3409000" />
-    </task>
-    <task id="LOCAL-00044" summary="v0.01">
-      <created>1495272511332</created>
-      <option name="number" value="00044" />
-      <option name="presentableId" value="LOCAL-00044" />
-      <option name="project" value="LOCAL" />
-      <updated>1495272511332</updated>
+      <workItem from="1497492375193" duration="3443000" />
     </task>
     <task id="LOCAL-00045" summary=":heavy_check_mark: :heavy_check_mark: :heavy_check_mark: 发布一个V0.01 版本">
       <created>1495272660046</created>
@@ -872,15 +862,21 @@
       <option name="project" value="LOCAL" />
       <updated>1497431936999</updated>
     </task>
-    <option name="localTasksCounter" value="93" />
+    <task id="LOCAL-00093" summary="redis使用连接池的一个坑，今天终于填充了，原来是`lua_code_cache on;`要开启的，否则，连接池用不了">
+      <created>1497495811505</created>
+      <option name="number" value="00093" />
+      <option name="presentableId" value="LOCAL-00093" />
+      <option name="project" value="LOCAL" />
+      <updated>1497495811506</updated>
+    </task>
+    <option name="localTasksCounter" value="94" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="241746000" />
+    <option name="totallyTimeSpent" value="241780000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1066" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19296375" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -891,7 +887,7 @@
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.6081371" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.6081371" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -910,7 +906,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="活动直播接口 API 数据访问Redis，如果没有则回源到后端Mysql数据库" />
     <MESSAGE value="获取http get/post 请求参数" />
     <MESSAGE value="helper 类方法归类 删除空格" />
     <MESSAGE value="json 解析的异常：(改方法可以避免cjson解析异常直接导致服务器500错误)" />
@@ -935,7 +930,8 @@
     <MESSAGE value="add test file" />
     <MESSAGE value="redis使用连接池、锁机制、二级缓存，全部为官方代码，第三方封装好的`redis_iresty`没有使用" />
     <MESSAGE value="redis_iresty" />
-    <option name="LAST_COMMIT_MESSAGE" value="redis_iresty" />
+    <MESSAGE value="redis使用连接池的一个坑，今天终于填充了，原来是`lua_code_cache on;`要开启的，否则，连接池用不了" />
+    <option name="LAST_COMMIT_MESSAGE" value="redis使用连接池的一个坑，今天终于填充了，原来是`lua_code_cache on;`要开启的，否则，连接池用不了" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -1264,7 +1260,7 @@
     <entry file="file://$PROJECT_DIR$/logs/live_error.log">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-3961">
-          <caret line="0" column="67" lean-forward="false" selection-start-line="0" selection-start-column="67" selection-end-line="0" selection-end-column="67" />
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
