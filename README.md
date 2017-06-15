@@ -632,6 +632,7 @@ http {
     +   解决缓存失效风暴 lua-resty-lock [二级缓存]          
     +   缓存时间问题：ngx.cache目前默认为1s        
 +   redis使用连接池、锁机制、二级缓存，全部为官方代码，第三方封装好的`redis_iresty`没有使用     
++   redis使用连接池的一个坑，今天终于填充了，原来是`lua_code_cache on;`要开启的，否则，连接池用不了  
     
 ##  openresty进行了简化成了7个阶段
 +   `set_by_lua`: 流程分支判断，判断变量初始哈

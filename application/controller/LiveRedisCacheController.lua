@@ -43,7 +43,7 @@ local function close_redis(red)
         return
     end
     --释放连接(连接池实现)
-    local pool_max_idle_time = 10000000 --毫秒
+    local pool_max_idle_time = 100000 --毫秒
     local pool_size = 100 --连接池大小
     local ok, err = red:set_keepalive(pool_max_idle_time, pool_size)
 
@@ -191,7 +191,7 @@ local function read_cache(key)
     end
 
     -- [lock] update the shm cache with the newly fetched value
-    local ok, err = live_ngx_cache:set(key, val, 1)
+    local ok, err = live_ngx_cache:set(key, val, 1)     -- 0.01 get_reused_times 2719
     if not ok then
         local ok, err = lock:unlock()
         if not ok then
