@@ -524,7 +524,7 @@
       <workItem from="1497427988425" duration="3871000" />
       <workItem from="1497431929008" duration="599000" />
       <workItem from="1497488708011" duration="94000" />
-      <workItem from="1497492375193" duration="3443000" />
+      <workItem from="1497492375193" duration="3734000" />
     </task>
     <task id="LOCAL-00045" summary=":heavy_check_mark: :heavy_check_mark: :heavy_check_mark: 发布一个V0.01 版本">
       <created>1495272660046</created>
@@ -873,7 +873,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="241780000" />
+    <option name="totallyTimeSpent" value="242071000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1066" extended-state="0" />
