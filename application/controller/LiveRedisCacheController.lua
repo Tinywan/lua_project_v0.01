@@ -4,32 +4,32 @@
 * |  Blog: http://www.cnblogs.com/Tinywan
 * |------------------------------------------------------------------------
 * |  Date: 2017/5/19 23:25
-* |  Function: To change this template use File | Settings | File Templates.
+* |  Function: local_live_test.
 * |  TestInfo: port = 63700 auth = tinywan123456
+* |  log [n] 这样子的log日志是可以删除的（）
 * |------------------------------------------------------------------------
 --]]
 local template = require "resty.template"
 local helper = require "vendor.helper"
 local redis = require "resty.redis"
-local cjson = require("cjson")
 local resty_lock = require "resty.lock"
 local http = require "resty.http"
-local cjson_encode = cjson.encode
-local cjson_decode = cjson.decode
 local log = ngx.log
 local ERR = ngx.ERR
 local exit = ngx.exit
 local ngx_var = ngx.var
 local print = ngx.print
-local live_ngx_cache = ngx.shared.live_ngx_cache;
-local live_room = ngx.shared.live_room;
+local live_ngx_cache = ngx.shared.live_ngx_cache
+local live_room = ngx.shared.live_room
+-- 非error 日志开关 1:开启，0:关闭
+local log_switch = 1
 
-local redis_host = "127.0.0.1"
+local redis_host = "121.41.88.209"
 local redis_port = 63789
-local redis_auth = "1111"
+local redis_auth = "tinywanredisamaistream123456789"
 local redis_timeout = 1000
 
------------------ set ngx.cache
+-- set ngx.cache
 local function set_cache(key, value, exptime)
     if not exptime then
         exptime = 0
@@ -92,7 +92,10 @@ local function read_redis(_host, _port, _auth, keys)
         resp = nil
     end
     close_redis(red)
-    log(ERR, " [read_redis] content from redis.cache  id = " .. keys[1]) -- tag data origin
+    -- [1] del log
+    if log_switch == 1 then
+        log(ERR, "[2] [read_redis] content from redis.cache  id = " .. keys[1]) -- tag data origin
+    end
     return resp
 end
 
@@ -133,7 +136,6 @@ local function write_redis(_host, _port, _auth, keys, values)
     return resp
 end
 
-
 -- get ngx.cache
 --[1]即使发生其他一些不相关的错误，您也需要尽快解除锁定。
 --[2]在释放锁之前，您需要从后端获得的结果更新缓存，以便其他已经等待锁定的线程在获得锁定后才能获得缓存值。
@@ -144,7 +146,9 @@ local function read_cache(key)
     -- step 1
     local val, err = live_ngx_cache:get(key)
     if val then
-        log(ERR, " [get_cache]  content from ngx.cache id = " .. key) -- tag data origin
+        if log_switch == 1 then
+            log(ERR, " [1] [read_ngx_cache]  content from ngx.cache id = " .. key) -- tag data origin
+        end
         return val
     end
 
@@ -187,7 +191,7 @@ local function read_cache(key)
         end
         -- FIXME: we should handle the backend miss more carefully
         -- here, like inserting a stub value into the cache.
-        log(ERR, "redis no value found : ", err)
+        log(ERR, "[4] ngx.cache find redis cache no value found : ", err)
         return ngx_resp
     end
 
@@ -212,9 +216,9 @@ end
 -------------- read_http 大并发采用 resty.http ，对于：ngx.location.capture 慎用
 local function read_http(id)
     local httpc = http.new()
-    local resp, err = httpc:request_uri("http://testwww.baidu.com", {
+    local resp, err = httpc:request_uri("http://testwww.amai9.com", {
         method = "GET",
-        path = "/api/Api?liveId=" .. id,
+        path = "/api/liveBackToSourceApi?liveId=" .. id,
         headers = {
             ["User-Agent"] = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.111 Safari/537.36"
         }
@@ -239,15 +243,17 @@ local function read_http(id)
 
     -- backend not data 判断api返回的状态码
     local status_code = helper.cjson_decode(resp.body)['code']
-    if tonumber(status_code) ~= 404 then
+    if tonumber(status_code) == 200 then
         -- 正常数据缓存到 Redis 数据缓存
         local live_info_key = "LIVE_TABLE:" .. id
-        local live_value = helper.cjson_decode(resp.body) -- 解析的Lua自己的然后存储到Redis 数据库中去
+        local live_value = helper.cjson_decode(resp.body)['data']-- 解析的Lua自己的然后存储到Redis 数据库中去(这里最好使用lua的json格式去写入)
         local live_live_str = write_redis(redis_host, redis_port, redis_auth, { live_info_key }, helper.cjson_encode(live_value))
         if not live_live_str then
             log(ERR, "redis set info error: ")
         end
-        log(ERR, " [read_http] content from backend API id : " .. id) -- tag data origin
+        if log_switch == 1 then
+            log(ERR, "[3] [read_http] content from backend API id : " .. id) -- tag data origin
+        end
         return helper.cjson_encode(live_value)
     else
         -- 后端没有数据直接返回 nil
@@ -256,42 +262,49 @@ local function read_http(id)
     end
 end
 
----------------------------------------------------------------------- 业务逻辑处理
+-- 业务逻辑处理
+local function print_html(id)
+    local cache_content = nil
+    local live_info_key = "LIVE_TABLE:" .. id
+    -- get ngx.cache content 这里遇到的坑就是，注意这里传递的自定义的key
+    local content = read_cache(live_info_key)
+
+    --if redis not request backend API and udpate redis cache
+    if not content then
+        log(ERR, "[5] redis not found content, back to backend API , id : ", id)
+        content = read_http(id)
+    end
+    -- if backend API  not success data , page show  backup data
+    if not content then
+        log(ERR, "backend API not found content, id : ", id)
+        return cache_content
+    end
+    -- if backend API  response result is false page show 403
+    if tostring(content) == "false" then
+        log(ERR, "backend API content is false ", id)
+        return cache_content
+    end
+    return content
+end
 -- get var id
 local id = ngx_var.id
-local live_info_key = "LIVE_TABLE:" .. id
-
--- chat room num
-local succ, err, forcible = live_room:set("chat", id)
--------- get ngx.cache content
-local content = read_cache(live_info_key)
-
---if redis not request backend API and udpate redis cache
-if not content then
-    log(ERR, "redis not found content, back to backend API , id : ", id)
-    content = read_http(id)
+local content = print_html(id)
+-- 在控制条件中除了false和nil 为假，其他值都为真，所以lua认为0和空字符串也是真
+if not content or content == nil then
+    -- backup data
+    template.render("404.html", {
+        title = "404 界面",
+    })
+    exit(200)
 end
 
--------------------------------- 主要就是这里要根据后端服务没有数据的情况处理，最好不要出现500错误就可以啦
--- if backend API  not success data , page show  404
-if not content then
-    log(ERR, "backend API not found content, id : ", id)
-    return ngx.exit(ngx.HTTP_NOT_FOUND)
-end
 
--- if backend API  response result is false page show 403
-if tostring(content) == "false" then
-    log(ERR, "backend API content is false ", id)
-    return ngx.exit(ngx.HTTP_FORBIDDEN)
-end
---print(content)
---exit(200)
 members = { Tom = 10, Jake = 11, Dodo = 12, Jhon = 16 }
 template.caching(true)
 template.render("index.html", {
     live_id = id,
     title = "Openresty 渲染 html 界面",
     ws_title = "Openresty 渲染 websocket",
-    content = cjson_decode(content),
+    content = helper.cjson_decode(content),
     members = members
 })
